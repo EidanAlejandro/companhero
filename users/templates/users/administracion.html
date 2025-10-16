@@ -1,0 +1,201 @@
+<!-- users/templates/users/administracion.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Administración</title>
+</head>
+<body>
+    <h1>Administración del Sistema</h1>
+    
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+            <div style="color: red; margin: 10px 0; padding: 10px; border: 1px solid red;">
+                {{ message }}
+            </div>
+            {% else %}
+            <div style="color: green; margin: 10px 0; padding: 10px; border: 1px solid green;">
+                {{ message }}
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    <div>
+        <label>Seleccionar:</label>
+        <select id="tipoSelect" onchange="toggleMenu()">
+            <option value="">Seleccione una opción</option>
+            <option value="Dirección">Dirección</option>
+            <option value="Departamento">Departamento</option>
+            <option value="Territorial">Territorial</option>
+            <option value="Jefe de Cuadrilla">Jefe de Cuadrilla</option>
+        </select>
+    </div>
+    
+    <!-- Menú para Dirección -->
+    <div id="direccionMenu" style="display: none; margin-top: 15px;">
+        <label>Acción para Dirección:</label>
+        <select id="direccionSelect" onchange="toggleCamposDireccion()">
+            <option value="">Seleccione una acción</option>
+            <option value="crear">Crear nueva dirección</option>
+            {% for direccion in direcciones %}
+            <option value="{{ direccion.id_direccion }}">{{ direccion.nombre_direccion }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- Campos para crear nueva dirección -->
+        <div id="crearDireccion" style="display: none; margin-top: 15px;">
+            <form method="post" id="crearFormDireccion">
+                {% csrf_token %}
+                <input type="hidden" name="accion" value="crear_direccion">
+                <div>
+                    <label>Asignar nombre:</label>
+                    <input type="text" name="nombre_direccion" id="nombreDireccion" placeholder="Ingrese el nombre de la dirección">
+                </div>
+                <button type="submit" style="margin-top: 10px;">Crear</button>
+            </form>
+        </div>
+        
+        <!-- Botón Eliminar (solo visible cuando se selecciona una dirección existente) -->
+        <div id="eliminarDireccion" style="display: none; margin-top: 15px;">
+            <form method="post" id="eliminarFormDireccion">
+                {% csrf_token %}
+                <input type="hidden" name="direccion_id" id="direccionId">
+                <button type="submit" style="background: #dc3545; color: white;">Eliminar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Menú para Departamento -->
+    <div id="departamentoMenu" style="display: none; margin-top: 15px;">
+        <label>Acción para Departamento:</label>
+        <select id="departamentoSelect" onchange="toggleCamposDepartamento()">
+            <option value="">Seleccione una acción</option>
+            <option value="crear">Crear nuevo departamento</option>
+            {% for departamento in departamentos %}
+            <option value="{{ departamento.id_departamento }}">{{ departamento.nombre_departamento }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- Campos para crear nuevo departamento -->
+        <div id="crearDepartamento" style="display: none; margin-top: 15px;">
+            <form method="post" id="crearFormDepartamento">
+                {% csrf_token %}
+                <input type="hidden" name="accion" value="crear_departamento">
+                <div>
+                    <label>Asignar nombre:</label>
+                    <input type="text" name="nombre_departamento" id="nombreDepartamento" placeholder="Ingrese el nombre del departamento">
+                </div>
+                <button type="submit" style="margin-top: 10px;">Crear</button>
+            </form>
+        </div>
+        
+        <!-- Botón Eliminar (solo visible cuando se selecciona un departamento existente) -->
+        <div id="eliminarDepartamento" style="display: none; margin-top: 15px;">
+            <form method="post" id="eliminarFormDepartamento">
+                {% csrf_token %}
+                <input type="hidden" name="departamento_id" id="departamentoId">
+                <button type="submit" style="background: #dc3545; color: white;">Eliminar</button>
+            </form>
+        </div>
+    </div>
+    
+    <br>
+    <a href="{% url 'listar_usuarios' %}">
+        <button>Volver</button>
+    </a>
+
+    <script>
+        function toggleMenu() {
+            const tipoSelect = document.getElementById('tipoSelect');
+            const direccionMenu = document.getElementById('direccionMenu');
+            const departamentoMenu = document.getElementById('departamentoMenu');
+            
+            // Ocultar todos los menús primero
+            direccionMenu.style.display = 'none';
+            departamentoMenu.style.display = 'none';
+            document.getElementById('crearDireccion').style.display = 'none';
+            document.getElementById('eliminarDireccion').style.display = 'none';
+            document.getElementById('crearDepartamento').style.display = 'none';
+            document.getElementById('eliminarDepartamento').style.display = 'none';
+            
+            // Mostrar menú según la opción seleccionada
+            if (tipoSelect.value === 'Dirección') {
+                direccionMenu.style.display = 'block';
+            } else if (tipoSelect.value === 'Departamento') {
+                departamentoMenu.style.display = 'block';
+            }
+        }
+        
+        function toggleCamposDireccion() {
+            const direccionSelect = document.getElementById('direccionSelect');
+            const crearDireccion = document.getElementById('crearDireccion');
+            const eliminarDireccion = document.getElementById('eliminarDireccion');
+            const direccionIdInput = document.getElementById('direccionId');
+            
+            // Ocultar todos los campos primero
+            crearDireccion.style.display = 'none';
+            eliminarDireccion.style.display = 'none';
+            
+            if (direccionSelect.value === 'crear') {
+                // Mostrar campos para crear nueva dirección
+                crearDireccion.style.display = 'block';
+            } else if (direccionSelect.value !== '') {
+                // Mostrar botón eliminar para dirección existente
+                eliminarDireccion.style.display = 'block';
+                direccionIdInput.value = direccionSelect.value;
+            }
+        }
+        
+        function toggleCamposDepartamento() {
+            const departamentoSelect = document.getElementById('departamentoSelect');
+            const crearDepartamento = document.getElementById('crearDepartamento');
+            const eliminarDepartamento = document.getElementById('eliminarDepartamento');
+            const departamentoIdInput = document.getElementById('departamentoId');
+            
+            // Ocultar todos los campos primero
+            crearDepartamento.style.display = 'none';
+            eliminarDepartamento.style.display = 'none';
+            
+            if (departamentoSelect.value === 'crear') {
+                // Mostrar campos para crear nuevo departamento
+                crearDepartamento.style.display = 'block';
+            } else if (departamentoSelect.value !== '') {
+                // Mostrar botón eliminar para departamento existente
+                eliminarDepartamento.style.display = 'block';
+                departamentoIdInput.value = departamentoSelect.value;
+            }
+        }
+        
+        // Función para poner primera letra en mayúscula automáticamente
+        function formatearNombre(input) {
+            setTimeout(function() {
+                if (input.value) {
+                    input.value = input.value.trim().replace(/\w\S*/g, function(txt) {
+                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                    });
+                }
+            }, 100);
+        }
+        
+        // Agregar event listeners para formatear automáticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const nombreDireccion = document.getElementById('nombreDireccion');
+            const nombreDepartamento = document.getElementById('nombreDepartamento');
+            
+            if (nombreDireccion) {
+                nombreDireccion.addEventListener('blur', function() {
+                    formatearNombre(this);
+                });
+            }
+            
+            if (nombreDepartamento) {
+                nombreDepartamento.addEventListener('blur', function() {
+                    formatearNombre(this);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

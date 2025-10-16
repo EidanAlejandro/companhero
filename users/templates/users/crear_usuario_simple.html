@@ -1,0 +1,57 @@
+<!-- users/templates/users/crear_usuario_simple.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Usuario</title>
+</head>
+<body>
+    <h1>Crear Nuevo Usuario</h1>
+    
+    {% if error %}
+    <div style="color: red; padding: 10px; border: 1px solid red; margin: 10px 0;">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'usuario_creado' in message.tags %}
+            <div style="color: green; padding: 10px; border: 1px solid green; margin: 10px 0;">
+                Usuario creado con éxito
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div>
+            <label>Nombre:</label>
+            <input type="text" name="nombre" required>
+        </div>
+        
+        <div>
+            <label>Apellido:</label>
+            <input type="text" name="apellido" required>
+        </div>
+        
+        <div>
+            <label>Correo:</label>
+            <input type="email" name="correo" required>
+        </div>
+        
+        <div>
+            <label>Teléfono:</label>
+            <input type="text" name="telefono">
+        </div>
+        
+        <br>
+        <button type="submit">Crear Usuario</button>
+    </form>
+    
+    <br>
+    <a href="{% url 'welcome' %}">Volver al Inicio</a>
+</body>
+</html>

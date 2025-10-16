@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bienvenido</title>
+</head>
+<body>
+  <h1>Bienvenido</h1>
+  
+  <p>Nombre: {{ user.first_name }} {{ user.last_name }}</p>
+  <p>Usuario: {{ user.username }}</p>
+  <p>Correo: {{ user.email }}</p>
+
+  <a href="{% url 'password_change' %}">
+    <button>Cambiar contraseña</button>
+  </a>
+
+  <a href="{% url 'crear_usuario_simple' %}">
+    <button>Crear Usuario</button>
+  </a>
+
+  <a href="{% url 'crear_direccion' %}">
+    <button>Crear Dirección</button>
+  </a>
+
+  <a href="{% url 'listar_usuarios' %}">
+    <button>Ver Usuarios</button>
+  </a>
+
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Cerrar</button>
+  </form>
+</body>
+</html>

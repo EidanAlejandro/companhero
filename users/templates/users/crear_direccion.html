@@ -1,0 +1,56 @@
+<!-- users/templates/users/crear_direccion.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Dirección</title>
+</head>
+<body>
+    <h1>Crear Nueva Dirección</h1>
+    
+    {% if error %}
+    <div style="color: red; padding: 10px; border: 1px solid red; margin: 10px 0;">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'direccion_creada' in message.tags %}
+            <div style="color: green; padding: 10px; border: 1px solid green; margin: 10px 0;">
+                Dirección creada con éxito
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div>
+            <label>Nombre de Dirección:</label>
+            <input type="text" name="nombre_direccion" required>
+        </div>
+        
+        <div>
+            <label>Asignar a Usuario:</label>
+            <select name="usuario" required>
+                <option value="">Seleccione un usuario</option>
+                {% for usuario in usuarios %}
+                <option value="{{ usuario.id_usuario }}">
+                    {{ usuario.nombre }} {{ usuario.apellido }} ({{ usuario.correo }})
+                </option>
+                {% empty %}
+                <option value="">No hay usuarios disponibles</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <br>
+        <button type="submit">Crear Dirección</button>
+    </form>
+    
+    <br>
+    <a href="{% url 'welcome' %}">Volver al Inicio</a>
+</body>
+</html>
